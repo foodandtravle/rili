@@ -106,108 +106,44 @@ extension NSDate{
     }
 }
 
-private extension NSDate {
-    
-    //另外一个时间的类型,分为上一个、下一个
-    enum anotherType {
-        case next   //下一个
-        case last   //上一个
-    }
-    
-    //时间类型
-    enum timeType {
-        case minute //分钟
-        case hour   //小时
-        case day    //天
-        case week   //周
-        case month  //月
-        case year   //年
-    }
-    
-    /**
-     *  Description :
-     *  计算下一个时间，或者说日期,date
-     *  @param type1 : 另外一个时间的类型,分为上一个、下一个
-     *  @param type2 : 时间类型
-     *  @param date : 当前日期 date
-     *  @param num : 数量
-     */
-     func anotherDateWithParameters(type1 : anotherType , type2 : timeType , date : NSDate) -> NSDate {
-        
-        var interval = 1.00 //Second 秒  一个月按30天计算
-        
-        switch type2 {
-        case .minute:
-                interval = interval * 60
-            break
-        case .hour:
-                interval = interval * 60 * 60
-            break
-        case .day:
-            interval = interval * 60 * 60 * 24
-            break
-        case .week:
-             interval = interval * 60 * 60 * 24 * 7
-            break
-        case .month:
-            interval = interval * 60 * 60 * 24 * 30
-            break
-        default:
-            interval = interval * 60 * 60 * 24 * 365
-            break
-        }
-        
-        //next 为正    last 上一个  为负
-        interval = type1 == .next ? interval : 0 - interval
-        
-        return date.dateByAddingTimeInterval(interval)
-    }
-}
-
-
 extension NSDate{
     
     func nextMinute() -> NSDate {
         
-        let calendar = NSCalendar.currentCalendar()
-        calendar.timeZone = NSTimeZone.init(abbreviation: "CST")!
-        
-        return calendar.dateByAddingUnit(.Minute, value: 1, toDate: self, options: .MatchFirst)!
-//        return self.anotherDateWithParameters(.next, type2: .minute, date: self)
+        return NSCalendar.currentCalendar().dateByAddingUnit(.Minute, value: 1, toDate: self, options: .MatchFirst)!
     }
     func lastMinute() -> NSDate {
-        return self.anotherDateWithParameters(.last, type2: .minute, date: self)
+       return NSCalendar.currentCalendar().dateByAddingUnit(.Minute, value: -1, toDate: self, options: .MatchFirst)!
     }
     func nextHour() -> NSDate {
-        return self.anotherDateWithParameters(.next, type2: .hour, date: self)
+         return NSCalendar.currentCalendar().dateByAddingUnit(.Hour, value: 1, toDate: self, options: .MatchFirst)!
     }
     func lastHour() -> NSDate {
-        return self.anotherDateWithParameters(.last, type2: .hour, date: self)
+         return NSCalendar.currentCalendar().dateByAddingUnit(.Hour, value: -1, toDate: self, options: .MatchFirst)!
     }
     func nextDay() -> NSDate {
-        let calendar = NSCalendar.currentCalendar()
-        return calendar.dateByAddingUnit(.Day, value: 1, toDate: self, options: .MatchFirst)!
+         return NSCalendar.currentCalendar().dateByAddingUnit(.Day, value: 1, toDate: self, options: .MatchFirst)!
     }
     func lastDay() -> NSDate {
-        return self.anotherDateWithParameters(.last, type2: .day, date: self)
+         return NSCalendar.currentCalendar().dateByAddingUnit(.Day, value: -1, toDate: self, options: .MatchFirst)!
     }
     func nextWeek() -> NSDate {
-        return self.anotherDateWithParameters(.next, type2: .week, date: self)
+        return NSCalendar.currentCalendar().dateByAddingUnit(.Weekday, value: 1, toDate: self, options: .MatchFirst)!
     }
     func lastWeek() -> NSDate {
-        return self.anotherDateWithParameters(.last, type2: .week, date: self)
+         return NSCalendar.currentCalendar().dateByAddingUnit(.Weekday, value: -1, toDate: self, options: .MatchFirst)!
     }
     func nextMonth() -> NSDate {
-        return self.anotherDateWithParameters(.next, type2: .month, date: self)
+         return NSCalendar.currentCalendar().dateByAddingUnit(.Month, value: 1, toDate: self, options: .MatchFirst)!
     }
     func lastMonth() -> NSDate {
-        return self.anotherDateWithParameters(.last, type2: .month, date: self)
+         return NSCalendar.currentCalendar().dateByAddingUnit(.Month, value: -1, toDate: self, options: .MatchFirst)!
     }
     func nextYear() -> NSDate {
-        return self.anotherDateWithParameters(.next, type2: .year, date: self)
+        return NSCalendar.currentCalendar().dateByAddingUnit(.Year, value: 1, toDate: self, options: .MatchFirst)!
     }
     func lastYear() -> NSDate {
-        return self.anotherDateWithParameters(.last, type2: .year, date: self)
+         return NSCalendar.currentCalendar().dateByAddingUnit(.Year, value: -1, toDate: self, options: .MatchFirst)!
     }
 }
 
