@@ -34,7 +34,7 @@ class ViewController: UIViewController ,UICollectionViewDelegate,UICollectionVie
         
         tempIndexPath = NSIndexPath.init(forItem: 0, inSection: 0)
         
-        currentMonthForDataSource(NSDate.init())
+        self.dataSource = NSDate.init().initDataSource()
         self.view.addSubview(self.collecView)
         
         
@@ -48,33 +48,14 @@ class ViewController: UIViewController ,UICollectionViewDelegate,UICollectionVie
     func lastMonth() {
         tempDate = tempDate.lastMonth()
         setNacigationItem(tempDate)
-        currentMonthForDataSource(tempDate)
+        self.dataSource = tempDate.initDataSource()
         self.collecView.reloadData()
     }
     func nextMonth() {
         tempDate = tempDate.nextMonth()
         setNacigationItem(tempDate)
-        currentMonthForDataSource(tempDate)
+        self.dataSource = tempDate.initDataSource()
         self.collecView.reloadData()
-    }
-    
-    func currentMonthForDataSource(date : NSDate) {
-        
-        tempDate = tempDate.dateForGMT()
-        let daysCurrnetMonth = tempDate.numberOfDaysInCurrentMonth()
-        let weekLy = tempDate.firstDayOfCurrentMonth().weeklyOrdinality()
-        
-        dataSource.removeAllObjects()
-        if weekLy > 1 {
-            for _ in 1...weekLy - 1 {
-                dataSource.addObject(" ")
-            }
-        }
-        for i in 1...daysCurrnetMonth {
-            
-            dataSource.addObject(String.init(i))
-        }
-        
     }
     
     func setNacigationItem(date : NSDate) {
@@ -118,17 +99,24 @@ class ViewController: UIViewController ,UICollectionViewDelegate,UICollectionVie
         
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(identifierCell, forIndexPath: indexPath) as! collectionViewCell
         
+        cell.titl.backgroundColor = UIColor.whiteColor()
+        
         if indexPath.item < self.dataSource.count {
             
 //            if dataSource[indexPath.item] as! NSObject == 25 {
 //                cell.titl.backgroundColor = UIColor.orangeColor()
 //            }
             
-            let str = dataSource[indexPath.item] as? String
+            let dateObj = dataSource[indexPath.item] as? NSDateComponents
             
-            cell.titl.text = str
+            let obj =  DateObject().dateForComponent(NSDate.init())
+            
+            if obj.year == dateObj?.year && obj.month == dateObj?.month && obj.day == dateObj?.day{
+                cell.titl.backgroundColor = UIColor.orangeColor()
+            }
+            
+            cell.titl.text = dateObj?.day == 0 ? "" : String(dateObj!.day)
         }
-        
         return cell
     }
     
@@ -163,6 +151,30 @@ class ViewController: UIViewController ,UICollectionViewDelegate,UICollectionVie
 
 extension NSDate{
     
+    func initDataSource() -> NSMutableArray {
+        
+        var tempDate = self.firstDayOfCurrentMonth()
+        let calendar = NSCalendar.currentCalendar()
+        let tempArray = NSMutableArray()
+        
+        let weekLy = tempDate.weeklyOrdinality()
+        if weekLy > 1 && weekLy < 7{
+            for _ in 1...weekLy {
+                let comp = NSDateComponents.init()
+                comp.day = 0
+                tempArray.addObject(comp)
+            }
+        }
+        
+        calendar.timeZone = NSTimeZone.init(abbreviation: "GMT")!
+        
+        for _ in 1...self.numberOfDaysInCurrentMonth() {
+            tempArray.addObject(DateObject().dateForComponent(tempDate))
+            tempDate = calendar.dateByAddingUnit(.Day, value: 1, toDate: tempDate, options: .MatchFirst)!
+        }
+        
+        return tempArray
+    }
 }
 
 private class headerView : UICollectionReusableView {

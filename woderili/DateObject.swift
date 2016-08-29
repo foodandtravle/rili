@@ -19,7 +19,4 @@ class DateObject: NSObject {
         
         return dateComponent
     }
-    
-    
-    
 }

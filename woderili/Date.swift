@@ -17,7 +17,7 @@ extension NSDate{
      *  默认时区为 shanghai , 需要转化为格林尼治时间进行统一
      *  格林尼治时间要比本地时间晚上八个小时。。。
      */
-    func dateForGMT() -> NSDate {
+    func dateForCHina() -> NSDate {
         let tempDate = self
         let zone = NSTimeZone.systemTimeZone()
         let interval = zone.secondsFromGMTForDate(tempDate)
@@ -78,8 +78,8 @@ extension NSDate{
      */
     func weeklyOrdinality() -> NSInteger {
         let calendar = NSCalendar.currentCalendar()
-        calendar.timeZone = NSTimeZone.init(abbreviation: "CST")!
-        
+        calendar.firstWeekday = 2//每周从周一开始
+        calendar.timeZone = NSTimeZone.init(abbreviation: "GMT")!//中国时区
         let num = calendar.ordinalityOfUnit(.Day, inUnit: .WeekOfMonth, forDate: self)
         
         return num
@@ -168,7 +168,12 @@ private extension NSDate {
 extension NSDate{
     
     func nextMinute() -> NSDate {
-        return self.anotherDateWithParameters(.next, type2: .minute, date: self)
+        
+        let calendar = NSCalendar.currentCalendar()
+        calendar.timeZone = NSTimeZone.init(abbreviation: "CST")!
+        
+        return calendar.dateByAddingUnit(.Minute, value: 1, toDate: self, options: .MatchFirst)!
+//        return self.anotherDateWithParameters(.next, type2: .minute, date: self)
     }
     func lastMinute() -> NSDate {
         return self.anotherDateWithParameters(.last, type2: .minute, date: self)
@@ -180,7 +185,8 @@ extension NSDate{
         return self.anotherDateWithParameters(.last, type2: .hour, date: self)
     }
     func nextDay() -> NSDate {
-        return self.anotherDateWithParameters(.next, type2: .day, date: self)
+        let calendar = NSCalendar.currentCalendar()
+        return calendar.dateByAddingUnit(.Day, value: 1, toDate: self, options: .MatchFirst)!
     }
     func lastDay() -> NSDate {
         return self.anotherDateWithParameters(.last, type2: .day, date: self)
